@@ -30,11 +30,13 @@ export const joinRoom = async () => {
 
 export const subscribeToRoom = (
   roomId: string,
-  callback: (room: Room) => void
+  callback: (room: Room | null) => void
 ) => {
   return onSnapshot(doc(db, ROOMS_COLLECTION, roomId), (doc) => {
     if (doc.exists()) {
       callback({ id: doc.id, ...doc.data() } as Room);
+    } else {
+      callback(null);
     }
   });
 };
