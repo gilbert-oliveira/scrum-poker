@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { createRoom } from "@/services/room";
+import { createRoomAction } from "@/actions/room";
 
 export default function Home() {
   const router = useRouter();
@@ -19,7 +19,7 @@ export default function Home() {
     setLoading(true);
     try {
       // Default to FIBONACCI for now.
-      const roomId = await createRoom(roomName, "FIBONACCI");
+      const roomId = await createRoomAction(roomName, "FIBONACCI");
       router.push(`/room/${roomId}`);
     } catch (error) {
       console.error("Error creating room:", error);

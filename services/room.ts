@@ -1,13 +1,5 @@
 import { db } from "@/lib/firebase/config";
-import {
-  collection,
-  doc,
-  addDoc,
-  serverTimestamp,
-  updateDoc,
-  onSnapshot,
-  setDoc,
-} from "firebase/firestore";
+import { collection, doc, onSnapshot } from "firebase/firestore";
 
 export interface Room {
   id: string;
@@ -29,60 +21,12 @@ export interface Vote {
 
 const ROOMS_COLLECTION = "rooms";
 
-export const createRoom = async (name: string, scaleType: string) => {
-  const roomRef = await addDoc(collection(db, ROOMS_COLLECTION), {
-    name,
-    scaleType,
-    status: "VOTING",
-    createdAt: serverTimestamp(),
-  });
-  return roomRef.id;
-};
-
 // Feature placeholder
 export const joinRoom = async () => {
   // TODO: Implement join logic with roomId, userId, userName
 };
 
-export const submitVote = async (
-  roomId: string,
-  userId: string,
-  userName: string,
-  value: string
-) => {
-  const voteRef = doc(db, ROOMS_COLLECTION, roomId, "votes", userId);
-  await setDoc(voteRef, {
-    userId,
-    userName,
-    value,
-    votedAt: serverTimestamp(),
-  });
-};
-
-export const revealVotes = async (roomId: string) => {
-  const roomRef = doc(db, ROOMS_COLLECTION, roomId);
-  await updateDoc(roomRef, {
-    status: "REVEALED",
-  });
-};
-
-export const resetRound = async (roomId: string) => {
-  const roomRef = doc(db, ROOMS_COLLECTION, roomId);
-  await updateDoc(roomRef, {
-    status: "VOTING",
-  });
-  // Note: In a real app we might want to archive old votes or delete them.
-  // For MVP, we can handle clearing differently or just delete the subcollection if needed,
-  // but subcollection deletion is not atomic in client SDK.
-  // Better strategy: Add a 'roundId' to the room and votes filter by roundId.
-  // implementing simplified reset for now:
-  // We will need to clear votes or ignore them.
-  // Let's assume we update a 'roundId' timestamp on the room, and use it to filter votes?
-  // Or just Keep it simple: UI will clear local state, but we really need backend toggle.
-  // Let's add 'updatedAt' to room on reset, and clients ignore votes older than that?
-  // A bit complex.
-  // Alternative: Reset status to VOTING.
-};
+// Write operations moved to actions/room.ts (Server Actions)
 
 export const subscribeToRoom = (
   roomId: string,

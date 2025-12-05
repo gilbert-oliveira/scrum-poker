@@ -8,12 +8,11 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PokerCard } from "@/components/room/poker-card";
 import {
-  submitVote,
-  revealVotes,
-  resetRound,
-  subscribeToVotes,
-  Vote,
-} from "@/services/room";
+  submitVoteAction,
+  revealVotesAction,
+  resetRoundAction,
+} from "@/actions/room";
+import { subscribeToVotes, Vote } from "@/services/room";
 
 // Next.js 15/16 params are async or promises in some contexts,
 // strictly speaking params is a Promise in recent canary/rc versions of Next.js 15+ for async pages.
@@ -76,15 +75,15 @@ export default function RoomPage() {
 
   const handleVote = async (value: string) => {
     if (!isJoined || !myUserId) return;
-    await submitVote(id, myUserId, userName, value);
+    await submitVoteAction(id, myUserId, userName, value);
   };
 
   const handleReveal = async () => {
-    await revealVotes(id);
+    await revealVotesAction(id);
   };
 
   const handleReset = async () => {
-    await resetRound(id);
+    await resetRoundAction(id);
   };
 
   const handleLeave = () => {
