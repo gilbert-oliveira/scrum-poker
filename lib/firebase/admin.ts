@@ -2,6 +2,7 @@ import "server-only";
 import { cert, getApps, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import path from "path";
+import fs from "fs";
 
 // Function to initialize the admin app
 function getAdminApp() {
@@ -13,15 +14,10 @@ function getAdminApp() {
   const serviceAccountPath = path.join(process.cwd(), "service-account.json");
 
   try {
-    // Ensure the file exists or handle error, but for now we assume it's there as per instructions.
-    // We can't import strictly using 'require' if we want it to dynamic,
-    // but usually we can just pass the path to cert if it was absolute,
-    // actually cert() takes object or path.
-    // However, in Next.js/Vercel environments, file reading can be tricky.
-    // Standard approach for local/server:
-
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const serviceAccount = require(serviceAccountPath);
+    // Use fs instead of require to avoid bundler trying to resolve the file at build time
+    const serviceAccount = JSON.parse(
+      fs.readFileSync(serviceAccountPath, "utf8")
+    );
 
     return initializeApp({
       credential: cert(serviceAccount),
